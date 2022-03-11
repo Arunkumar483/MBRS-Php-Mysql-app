@@ -89,7 +89,7 @@ Resources:
     Properties:
       VpcId: !Ref VPC
       AvailabilityZone: us-east-1b
-      CidrBlock: !Select [ 0, !Cidr [ !GetAtt VPC.CidrBlock, 6, 8 ]]
+      CidrBlock: !Select [ 5, !Cidr [ !GetAtt VPC.CidrBlock, 6, 8 ]]
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
