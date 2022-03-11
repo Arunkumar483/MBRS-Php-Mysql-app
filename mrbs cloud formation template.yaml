@@ -216,6 +216,7 @@ Resources:
   
   ALB:
       Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+      DependsOn: [ InternetGatewayAttachment]
       Properties:
           Name: "arunkumaralb"
           Scheme: "internet-facing"
