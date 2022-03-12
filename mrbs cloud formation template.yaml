@@ -218,7 +218,7 @@ Resources:
     Properties:
         Domain: vpc
 
-  Route:
+  NATRoute:
     Type: AWS::EC2::Route
     Properties:
         RouteTableId:
@@ -263,7 +263,7 @@ Resources:
   
   ALB:
       Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
-      DependsOn: [ InternetGatewayAttachment]
+      DependsOn: [ InternetGatewayAttachment,NATRoute]
       Properties:
           Name: "arunkumaralb"
           Scheme: "internet-facing"
@@ -355,7 +355,7 @@ Resources:
               #formatting error
               - !Join
                   - ""
-                  - - "sed -i"
+                  - - "sed -i "
                     - "'s/REPLACE_HOST/"
                     - !GetAtt RDSdbinstance.Endpoint.Address
                     - "/g' /web/config.inc.php"
