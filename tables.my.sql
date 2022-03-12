@@ -11,7 +11,7 @@
 # (2) If you add new fields then you should also change the global variable
 #     $standard_fields.   Note that if you are just adding custom fields for
 #     a single site then this is not necessary.
-
+USE mrbs;
 CREATE TABLE mrbs_area
 (
   id                          int NOT NULL auto_increment,
