@@ -146,6 +146,26 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Public Routes
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Private Routes
+  
+  PrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet1
+  
+  PrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet2
   
   InternetGateway:
     Type: AWS::EC2::InternetGateway
@@ -179,6 +199,33 @@ Resources:
     Properties:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet2
+
+  NAT:
+    Type: AWS::EC2::NatGateway
+    Properties:
+        AllocationId:
+          Fn::GetAtt:
+          - EIP
+          - AllocationId
+        SubnetId:
+          Ref: PublicSubnet1
+        Tags:
+        - Key: Name
+          Value: MRBS-STACK
+
+  EIP:
+    Type: AWS::EC2::EIP
+    Properties:
+        Domain: vpc
+
+  Route:
+    Type: AWS::EC2::Route
+    Properties:
+        RouteTableId:
+          Ref: PrivateRouteTable
+        DestinationCidrBlock: 0.0.0.0/0
+        NatGatewayId:
+          Ref: NAT
   
 
   Ec2SecurityGroup:
