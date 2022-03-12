@@ -352,13 +352,14 @@ Resources:
                     - ' --password=' 
                     - !Ref DBPassword
                     - ' <tables.my.sql'
+              - "cd web"
               #formatting error
               - !Join
                   - ""
                   - - "sed -i "
                     - "'s/REPLACE_HOST/"
                     - !GetAtt RDSdbinstance.Endpoint.Address
-                    - "/g' /web/config.inc.php"
+                    - "/g' config.inc.php"
 
 
 
