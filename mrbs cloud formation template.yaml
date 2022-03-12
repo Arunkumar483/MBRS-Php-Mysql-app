@@ -121,7 +121,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: us-east-1c
+      AvailabilityZone: us-east-1a
       CidrBlock: !Select [ 3, !Cidr [ !GetAtt VPC.CidrBlock, 6, 8 ]]
       MapPublicIpOnLaunch: false
       Tags:
@@ -132,7 +132,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: us-east-1d
+      AvailabilityZone: us-east-1b
       CidrBlock: !Select [ 4, !Cidr [ !GetAtt VPC.CidrBlock, 6, 8 ]]
       MapPublicIpOnLaunch: false
       Tags:
