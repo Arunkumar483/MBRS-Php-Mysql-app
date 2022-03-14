@@ -363,7 +363,7 @@ Resources:
 
 
 
-              - "cp -r web/* /var/www/html"
+              - "cp -r * /var/www/html"
 
 
   DBSecurityGroup:
