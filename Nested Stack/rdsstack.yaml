@@ -1,0 +1,105 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description:
+
+Parameters:
+  EnvironmentName:
+    Description: An environment name that is prefixed to resource names
+    Type: String
+    Default: MRBS APP
+  
+   PrivateSubnet3:
+    Description: A reference to the private subnet in the 1st Availability Zone for RDS instance
+    Type: String
+
+  PrivateSubnet4:
+    Description: A reference to the private subnet in the 2nd Availability Zone  for RDS instance
+    Type: String
+  
+  DBClass:
+    Description: Database instance class
+    Type: String
+    Default: db.t2.micro
+    
+  DBInstance:
+    Description: DB Instance for RDS
+    Type: String
+    Default: mrbs
+
+  DBPassword:
+    Description: DB Password
+    Type: String
+    Default: mrbs-password 
+  
+  DBUser:
+    Description: DB User
+    Type: String
+    Default: mrbs
+  
+  DBName:
+    Description: DB Name
+    Type: String
+    Default: mrbs
+
+  MultiAZDb:
+    Default: 'false'
+    Description: Create a Multi-AZ MySQL Amazon RDS database instance
+    Type: String
+    AllowedValues:
+      - 'true'
+      - 'false'
+
+Resources:
+  DBSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Access rds database
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '3306'
+          ToPort: '3306'
+          CidrIp: 0.0.0.0/0 
+        #INCLUDE VPC CIDR IN INGRESS
+      SecurityGroupEgress: 
+        - CidrIp: 0.0.0.0/0
+          FromPort: 0
+          IpProtocol: -1
+          ToPort: 0
+      VpcId: !Ref VPC
+  
+  RDSSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Private subnet group for rds instance
+      DBSubnetGroupName: RDSSubnetGroup
+      SubnetIds:
+        - !Ref PrivateSubnet3
+        - !Ref PrivateSubnet4
+      Tags:
+        - Key: Name
+          Value: Arun CF SubnetGroup
+
+  RDSdbinstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: !Ref DBName
+      AllocatedStorage: '5'
+      # storage
+      DBInstanceClass: !Ref DBClass
+      # dbclass
+      Engine: MySQL
+      MultiAZ: !Ref MultiAZDb
+      #MultiAZDatabase
+      DBSubnetGroupName: !Ref RDSSubnetGroup
+      MasterUsername: !Ref DBUser
+      MasterUserPassword: !Ref DBPassword
+      VPCSecurityGroups:
+        - !GetAtt 
+          - DBSecurityGroup
+          - GroupId
+
+Outputs: 
+  RDSHost:
+    Value: !GetAtt RDSdbinstance.Endpoint.Address
+    Description : Endpoint of MRBS RDS
+
+  

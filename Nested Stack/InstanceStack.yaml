@@ -1,0 +1,206 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description:
+
+Parameters:
+  EnvironmentName:
+    Description: An environment name that is prefixed to resource names
+    Type: String
+    Default: MRBS APP
+
+  KeyName:
+    Description: Key name for resource creation
+    Type: String
+    Default: arunkumarkeypair
+  
+  ImageId:
+    Description: AMI Id for ec2 instance creation
+    Type: String
+    Default : ami-0c293f3f676ec4f90
+  
+  InstanceType:
+    Description: Instance Type for ec2 instance creation
+    Type: String
+    Default : t2.micro
+  
+  VPC:
+    Description: A reference to the created VPC
+    Type: String
+
+  PublicSubnet1:
+    Description: A reference to the public subnet in the 1st Availability Zone
+    Type: String
+
+  PublicSubnet2:
+    Description: A reference to the public subnet in the 2nd Availability Zone
+    Type: String
+
+  PrivateSubnet1:
+    Description: A reference to the private subnet in the 1st Availability Zone for Web instance
+    Type: String
+
+  PrivateSubnet2:
+    Description: A reference to the private subnet in the 2nd Availability Zone for Web instance
+    Type: String
+  
+  RDSHost:
+    Description: A reference to RDS Endpoint
+
+  DBPassword:
+    Description: DB Password
+    Type: String
+    Default: mrbs-password 
+  
+  DBUser:
+    Description: DB User
+    Type: String
+    Default: mrbs
+  
+
+  
+
+Resources:
+  Ec2SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable HTTP and SSH 
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPC
+
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: security group for ALB
+      GroupName: ALBSecurityGroup
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '80'
+        ToPort: '80'
+        CidrIp: '0.0.0.0/0'
+      - IpProtocol: tcp
+        FromPort: '22'
+        ToPort: '22'
+        CidrIp: '0.0.0.0/0'
+      VpcId:
+        Ref: VPC
+  
+  
+  ALB:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+          Name: "arunkumaralb"
+          Scheme: "internet-facing"
+          Type: "application"
+          Subnets: 
+            - !Ref PublicSubnet1
+            - !Ref PublicSubnet2
+          SecurityGroups: 
+            - !Ref ALBSecurityGroup
+
+  ALBListener:
+    Type: 'AWS::ElasticLoadBalancingV2::Listener'
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref ALBTargetGroup
+      LoadBalancerArn: !Ref ALB
+      Port: '80'
+      Protocol: HTTP
+
+  ALBTargetGroup:
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+    DependsOn: [ LaunchConfig]
+    Properties:
+      HealthCheckPath: /index.php
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 5
+   
+      VpcId: !Ref VPC
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: 'true'
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: stickiness.lb_cookie.duration_seconds
+          Value: '30'
+
+  WebASGroup:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      VPCZoneIdentifier:
+        - Ref: PrivateSubnet1
+        - Ref: PrivateSubnet2
+      LaunchConfigurationName: !Ref LaunchConfig
+      MinSize: '1'
+      MaxSize: '3'
+      DesiredCapacity: 2
+      TargetGroupARNs:
+        - !Ref ALBTargetGroup
+  
+  LaunchConfig:
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Properties:
+      ImageId: !Ref ImageId
+      KeyName: !Ref KeyName
+      SecurityGroups:
+        - !Ref Ec2SecurityGroup
+      InstanceType: !Ref InstanceType
+      UserData:
+        Fn::Base64: 
+          !Join 
+            - "\n"
+            - - "#!/bin/bash"
+              - "sudo yum update -y"
+              - "sudo yum install git -y"
+              - "sudo yum update -y"
+              - "sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2"
+              - "sudo yum install -y httpd mariadb-server"
+              - "sudo systemctl start httpd"
+              - "sudo systemctl enable httpd"
+              - "sudo usermod -a -G apache ec2-user"
+              - "sudo chown -R ec2-user:apache /var/www"
+              - "sudo chmod 2775 /var/www"
+              - "cd tmp"
+              - "git clone https://github.com/Arunkumar483/MBRS-Php-Mysql-app.git"
+              - "cd MBRS-Php-Mysql-app"
+              - !Join 
+                  - ""
+                  - - 'sudo mysql -h '
+                    - !Ref RDSHost
+                    - ' -P 3306 -u '
+                    - !Ref DBUser
+                    - ' --password=' 
+                    - !Ref DBPassword
+                    - ' <tables.my.sql'
+              - "cd web"
+              - !Join
+                  - ""
+                  - - "sed -i "
+                    - "'s/REPLACE_HOST/"
+                    - !Ref RDSHost
+                    - "/g' config.inc.php"
+
+
+
+              - "cp -r * /var/www/html"
+
+WebsiteURL:
+    Value: !Join 
+      - ''
+      - - 'http://'
+        - !GetAtt 
+          - ALB
+          - DNSName
+        - /
+    Description : Endpoint of MRBS application  
