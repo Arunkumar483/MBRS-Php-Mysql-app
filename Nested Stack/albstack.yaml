@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description:
+Description: MRBS alb
 
 Parameters:
   EnvironmentName:
@@ -10,17 +10,14 @@ Parameters:
   KeyName:
     Description: Key name for resource creation
     Type: String
-    Default: arunkumarkeypair
   
   ImageId:
     Description: AMI Id for ec2 instance creation
     Type: String
-    Default : ami-0c293f3f676ec4f90
   
   InstanceType:
     Description: Instance Type for ec2 instance creation
     Type: String
-    Default : t2.micro
   
   VPC:
     Description: A reference to the created VPC
@@ -44,19 +41,15 @@ Parameters:
   
   RDSHost:
     Description: A reference to RDS Endpoint
+    Type: String
 
   DBPassword:
     Description: DB Password
     Type: String
-    Default: mrbs-password 
   
   DBUser:
     Description: DB User
     Type: String
-    Default: mrbs
-  
-
-  
 
 Resources:
   Ec2SecurityGroup:
@@ -195,12 +188,13 @@ Resources:
 
               - "cp -r * /var/www/html"
 
-WebsiteURL:
-    Value: !Join 
-      - ''
-      - - 'http://'
-        - !GetAtt 
-          - ALB
-          - DNSName
-        - /
-    Description : Endpoint of MRBS application  
+Outputs:
+  WebsiteURL:
+      Value: !Join 
+        - ''
+        - - 'http://'
+          - !GetAtt 
+            - ALB
+            - DNSName
+          - /
+      Description : Endpoint of MRBS application  

@@ -1,7 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: This Network Substack comprises of an VPc with 4 private subnets (2 subnets for web server in different AZs,2 subnets for RDS AZs)
-and 2 public subnets in different AZs for ALB.An Internet gateway for the VPC is integrated for interacting with public traffic and A Nat gateway(acts as a proxy) is integrated
-in the public subnet by which the web instances in private subnets communicate.
+Description: This Network Substack comprises of an VPc with 4 private subnets (2 subnets for web server in different AZs,2 subnets for RDS AZs) and 2 public subnets in different AZs for ALB.An Internet gateway for the VPC is integrated for interacting with public traffic and A Nat gateway(acts as a proxy) is integrated in the public subnet by which the web instances in private subnets communicate.
 Parameters:
   EnvironmentName:
     Description: An environment name that is prefixed to resource names

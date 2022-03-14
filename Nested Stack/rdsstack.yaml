@@ -1,44 +1,50 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description:
+Description: RDSSTACK
 
 Parameters:
   EnvironmentName:
     Description: An environment name that is prefixed to resource names
     Type: String
     Default: MRBS APP
+
+   VpcCIDR:
+    Description: Please enter the IP range (CIDR notation) for this VPC
+    Type: String
   
-   PrivateSubnet3:
+  VPC:
+    Description: A reference to the created VPC
+    Type: String
+  
+  PrivateSubnet3:
     Description: A reference to the private subnet in the 1st Availability Zone for RDS instance
     Type: String
 
   PrivateSubnet4:
     Description: A reference to the private subnet in the 2nd Availability Zone  for RDS instance
     Type: String
+
+  DBInstance:
+    Description: DB Instance for RDS
+    Type: String
+    Default: mrbs
   
   DBClass:
     Description: Database instance class
     Type: String
     Default: db.t2.micro
     
-  DBInstance:
-    Description: DB Instance for RDS
-    Type: String
-    Default: mrbs
 
   DBPassword:
     Description: DB Password
     Type: String
-    Default: mrbs-password 
   
   DBUser:
     Description: DB User
     Type: String
-    Default: mrbs
   
   DBName:
     Description: DB Name
     Type: String
-    Default: mrbs
 
   MultiAZDb:
     Default: 'false'
