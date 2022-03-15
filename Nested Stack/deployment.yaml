@@ -99,9 +99,7 @@ Resources:
         KeyName : !Ref KeyName
         InstanceType : !Ref InstanceType
         DBUser: !Ref DBUser
-        DBName: !Ref DBName
         DBPassword: !Ref DBPassword
-        DBInstance: !Ref DBInstance
         VPC : !GetAtt NetworkSubStack.Outputs.VPC
         PublicSubnet1 : !GetAtt NetworkSubStack.Outputs.PublicSubnet1
         PublicSubnet2 : !GetAtt NetworkSubStack.Outputs.PublicSubnet2
