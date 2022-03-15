@@ -1,8 +1,4 @@
-Description: MRBS STACK 
-
-
-
-
+Description: This cloud formation Template deals with the deployment of MRBS(Meeting Room Booking System) application.The template comprises of 3 substacks(Network Stack,ALB Stack,RDS stack).The MRBS application uses MYSQL Database which is integrated in RDS Stack.
 
 Parameters:
   EnvironmentName:

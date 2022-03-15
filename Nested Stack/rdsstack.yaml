@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: RDSSTACK
+Description: This RDS substack comprises of RDS and its components(RDS subnet group and security group) which will be deployed in Private Subnets in different AZs.
 
 Parameters:
   EnvironmentName:

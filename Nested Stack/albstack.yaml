@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: MRBS alb
+Description: This ALB Substack comprises of ALB and its components(ALB Listeners,ALB target group),an autoscaling group and their launch configuration.This stack ensures deployment of webservers in different subnets placed in different AZs.
 
 Parameters:
   EnvironmentName:
