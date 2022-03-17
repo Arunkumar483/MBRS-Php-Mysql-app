@@ -19,12 +19,12 @@ Parameters:
   ImageId:
     Description: AMI Id for ec2 instance creation
     Type: String
-    Default : ami-0c293f3f676ec4f90
+    Default : ami-0c293f3f676ec4f90   #ami id mappings for each region.
   
   InstanceType:
     Description: Instance Type for ec2 instance creation
     Type: String
-    Default : t2.micro
+    Default : t2.micro              #instance type
   
   DBClass:
     Description: Database instance class
@@ -84,7 +84,6 @@ Resources:
         PrivateSubnet3 : !GetAtt NetworkSubStack.Outputs.PrivateSubnet3
         PrivateSubnet4 : !GetAtt NetworkSubStack.Outputs.PrivateSubnet4
           
-
   ALBSubStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:

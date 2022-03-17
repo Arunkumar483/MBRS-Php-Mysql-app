@@ -55,35 +55,45 @@ Resources:
   Ec2SecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupDescription: Enable HTTP and SSH 
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 0.0.0.0/0
+      GroupDescription: security group for EC2
       VpcId: !Ref VPC
 
+  #RULES FOR EC2 SECURITY GROUPS
+  SGBaseIngressForHttpEC2:
+   Type: 'AWS::EC2::SecurityGroupIngress'
+   Properties:
+      GroupId: !Ref ALBSecurityGroup #the requests from port 80 coming from the alb security group can access the web instance 
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      SourceSecurityGroupId: !GetAtt EC2SecurityGroup.GroupId # to which security group the rule should be added to
+  
+  SGBaseIngressForSSHEC2:
+   Type: 'AWS::EC2::SecurityGroupIngress'
+   Properties:
+      GroupId: !Ref EC2SecurityGroup #the instances in the same vpc which has the same security group as web server will be able to ssh into the web server.
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      SourceSecurityGroupId: !GetAtt EC2SecurityGroup.GroupId # to which security group the rule should be added to
+  
   ALBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: security group for ALB
       GroupName: ALBSecurityGroup
-      SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: '80'
-        ToPort: '80'
-        CidrIp: '0.0.0.0/0'
-      - IpProtocol: tcp
-        FromPort: '22'
-        ToPort: '22'
-        CidrIp: '0.0.0.0/0'
       VpcId:
         Ref: VPC
   
+  #RULES FOR ALB SECURITY GROUPS
+  SGBaseIngressForHttpALB:
+   Type: 'AWS::EC2::SecurityGroupIngress'
+   Properties:
+      CidrIp: 0.0.0.0/0  #the requests from port 80 coming from anywhere can access the web instance 
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      SourceSecurityGroupId: !GetAtt ALBSecurityGroup.GroupId # to which security group the rule should be added to
   
   ALB:
     Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
@@ -151,25 +161,25 @@ Resources:
       InstanceType: !Ref InstanceType
       UserData:
         Fn::Base64: 
-          !Join 
+          !Join  
             - "\n"
             - - "#!/bin/bash"
-              - "sudo yum update -y"
-              - "sudo yum install git -y"
-              - "sudo yum update -y"
-              - "sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2"
-              - "sudo yum install -y httpd mariadb-server"
-              - "sudo systemctl start httpd"
-              - "sudo systemctl enable httpd"
-              - "sudo usermod -a -G apache ec2-user"
-              - "sudo chown -R ec2-user:apache /var/www"
-              - "sudo chmod 2775 /var/www"
+              - "yum update -y"
+              - "yum install git -y"
+              - "yum update -y"
+              - "amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2"
+              - "yum install -y httpd mariadb-server"
+              - "systemctl start httpd"
+              - "systemctl enable httpd"
+              - "usermod -a -G apache ec2-user"
+              - "chown -R ec2-user:apache /var/www"
+              - "chmod 2775 /var/www"
               - "cd tmp"
               - "git clone https://github.com/Arunkumar483/MBRS-Php-Mysql-app.git"
               - "cd MBRS-Php-Mysql-app"
               - !Join 
                   - ""
-                  - - 'sudo mysql -h '
+                  - - 'mysql -h '
                     - !Ref RDSHost
                     - ' -P 3306 -u '
                     - !Ref DBUser
@@ -183,9 +193,6 @@ Resources:
                     - "'s/REPLACE_HOST/"
                     - !Ref RDSHost
                     - "/g' config.inc.php"
-
-
-
               - "cp -r * /var/www/html"
 
 Outputs:

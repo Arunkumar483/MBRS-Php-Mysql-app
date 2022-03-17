@@ -37,6 +37,7 @@ Parameters:
   DBPassword:
     Description: DB Password
     Type: String
+  #no echo it will hinder the password
   
   DBUser:
     Description: DB User
@@ -59,18 +60,26 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: Access rds database
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: '3306'
-          ToPort: '3306'
-          CidrIp: 0.0.0.0/0 
-        #INCLUDE VPC CIDR IN INGRESS
-      SecurityGroupEgress: 
-        - CidrIp: 0.0.0.0/0
-          FromPort: 0
-          IpProtocol: -1
-          ToPort: 0
       VpcId: !Ref VPC
+  
+  SGBaseIngressForSQLDB:
+   Type: 'AWS::EC2::SecurityGroupIngress'
+   Properties:
+      GroupId: !Ref EC2SecurityGroup #the requests from port 80 coming from the alb security group can access the web instance 
+      IpProtocol: tcp
+      FromPort: 3306
+      ToPort: 3306
+      SourceSecurityGroupId: !GetAtt DBSecurityGroup.GroupId # to which security group the rule should
+
+  SGBaseEgressForSQLDB:
+   Type: 'AWS::EC2::SecurityGroupEgress'
+   Properties:
+      GroupId: !Ref EC2SecurityGroup #the requests from port 80 coming from the alb security group can access the web instance 
+      IpProtocol: tcp
+      FromPort: 3306
+      ToPort: 3306
+      SourceSecurityGroupId: !GetAtt DBSecurityGroup.GroupId # to which security group the rule should
+  
   
   RDSSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
