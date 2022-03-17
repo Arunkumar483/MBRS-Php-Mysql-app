@@ -179,7 +179,64 @@ Resources:
     Properties:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet2
+#SECURITY GROUPS
+  Ec2SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: security group for EC2
+      VpcId: !Ref VPC
 
+  #RULES FOR EC2 SECURITY GROUPS
+  SGBaseIngressForHttpEC2:
+   Type: 'AWS::EC2::SecurityGroupIngress'
+   Properties:
+      GroupId: !Ref ALBSecurityGroup #the requests from port 80 coming from the alb security group can access the web instance 
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      SourceSecurityGroupId: !GetAtt EC2SecurityGroup.GroupId # to which security group the rule should be added to
+  
+  SGBaseIngressForSSHEC2:
+   Type: 'AWS::EC2::SecurityGroupIngress'
+   Properties:
+      GroupId: !Ref EC2SecurityGroup #the instances in the same vpc which has the same security group as web server will be able to ssh into the web server.
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      SourceSecurityGroupId: !GetAtt EC2SecurityGroup.GroupId # to which security group the rule should be added to
+  
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: security group for ALB
+      GroupName: ALBSecurityGroup
+      VpcId:
+        Ref: VPC
+  
+  #RULES FOR ALB SECURITY GROUPS
+  SGBaseIngressForHttpALB:
+   Type: 'AWS::EC2::SecurityGroupIngress'
+   Properties:
+      CidrIp: 0.0.0.0/0  #the requests from port 80 coming from anywhere can access the web instance 
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      SourceSecurityGroupId: !GetAtt ALBSecurityGroup.GroupId # to which security group the rule should be added to
+        
+  DBSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Access rds database
+      VpcId: !Ref VPC
+  
+  SGBaseIngressForSQLDB:
+   Type: 'AWS::EC2::SecurityGroupIngress'
+   Properties:
+      GroupId: !Ref EC2SecurityGroup #the requests from port 80 coming from the alb security group can access the web instance 
+      IpProtocol: tcp
+      FromPort: 3306
+      ToPort: 3306
+      SourceSecurityGroupId: !GetAtt DBSecurityGroup.GroupId # to which security group the rule should  
 
 
 
