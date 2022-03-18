@@ -46,6 +46,7 @@ Parameters:
   DBPassword:
     Description: DB Password
     Type: String
+    NoEcho: true
   
   DBUser:
     Description: DB User

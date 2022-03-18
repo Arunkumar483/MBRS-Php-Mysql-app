@@ -39,6 +39,7 @@ Parameters:
   DBPassword:
     Description: DB Password
     Type: String
+    NoEcho: true
     Default: mrbs-password 
   
   DBUser:

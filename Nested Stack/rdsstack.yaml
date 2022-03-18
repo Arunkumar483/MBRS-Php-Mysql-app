@@ -37,6 +37,7 @@ Parameters:
   DBPassword:
     Description: DB Password
     Type: String
+    NoEcho: true
   #no echo it will hinder the password
   
   DBUser:
@@ -97,7 +98,7 @@ Resources:
       DBSubnetGroupName: !Ref RDSSubnetGroup
       MasterUsername: !Ref DBUser
       MasterUserPassword: !Ref DBPassword
-      VPCSecurityGroups: !Ref DBSecurityGroup
+      VPCSecurityGroups: [!Ref DBSecurityGroup]
 
 Outputs: 
   RDSHost:
