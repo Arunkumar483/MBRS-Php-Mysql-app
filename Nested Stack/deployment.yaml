@@ -16,15 +16,12 @@ Parameters:
     Type: String
     Default: arunkumarkeypair
   
-  ImageId:
-    Description: AMI Id for ec2 instance creation
-    Type: String
-    Default : ami-0c293f3f676ec4f90   #ami id mappings for each region.
-  
   InstanceType:
     Description: Instance Type for ec2 instance creation
     Type: String
     Default : t2.micro              #instance type
+    AllowedValues:
+      - t2.micro
   
   DBClass:
     Description: Database instance class
@@ -60,7 +57,18 @@ Parameters:
       - 'true'
       - 'false'
 
-
+Mappings: 
+  RegionMap: 
+    us-east-1: 
+      "HVM64": "ami-03e0b06f01d45a4eb"
+    us-west-1: 
+      "HVM64": "ami-052f64d0cd359fe1f"
+    eu-west-1: 
+      "HVM64": "ami-010c802cb2f348b54"
+    ap-southeast-1: 
+      "HVM64": "ami-02c62c1cc162ef9a1"
+    ap-northeast-1: 
+      "HVM64": "ami-0521a4a0a1329ff86"
 
 Resources:
   NetworkSubStack:
@@ -92,7 +100,7 @@ Resources:
       TemplateURL: https://mrbs-substacks.s3.amazonaws.com/albstack.yaml
       Parameters:
         EnvironmentName : !Ref  EnvironmentName
-        ImageId: !Ref ImageId
+        ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", HVM64]
         KeyName : !Ref KeyName
         InstanceType : !Ref InstanceType
         DBUser: !Ref DBUser
