@@ -83,6 +83,7 @@ Resources:
         VPC : !GetAtt NetworkSubStack.Outputs.VPC
         PrivateSubnet3 : !GetAtt NetworkSubStack.Outputs.PrivateSubnet3
         PrivateSubnet4 : !GetAtt NetworkSubStack.Outputs.PrivateSubnet4
+        DBSecurityGroup: !GetAtt NetworkSubStack.Outputs.DBSecurityGroup
           
   ALBSubStack:
     Type: 'AWS::CloudFormation::Stack'
@@ -100,6 +101,8 @@ Resources:
         PublicSubnet2 : !GetAtt NetworkSubStack.Outputs.PublicSubnet2
         PrivateSubnet1 : !GetAtt NetworkSubStack.Outputs.PrivateSubnet1
         PrivateSubnet2 : !GetAtt NetworkSubStack.Outputs.PrivateSubnet2
+        Ec2SecurityGroup: !GetAtt NetworkSubStack.Outputs.Ec2SecurityGroup
+        ALBSecurityGroup: !GetAtt NetworkSubStack.Outputs.ALBSecurityGroup
         RDSHost: !GetAtt RDSSubStack.Outputs.RDSHost
 
 

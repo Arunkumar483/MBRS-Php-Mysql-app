@@ -51,6 +51,15 @@ Parameters:
     Description: DB User
     Type: String
 
+  Ec2SecurityGroup:
+    Description: A reference to the ec2 security group
+    Type: String
+
+  ALBSecurityGroup:
+    Description: A reference to the alb security group
+    Type: String
+  
+
 Resources:
   
   ALB:

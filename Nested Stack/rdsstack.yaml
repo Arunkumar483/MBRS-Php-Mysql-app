@@ -55,9 +55,12 @@ Parameters:
       - 'true'
       - 'false'
 
+  DBSecurityGroup:
+    Description: A reference to the db security group
+    Type: String
+
 Resources:
   
-
   # SGBaseEgressForSQLDB:
   #  Type: 'AWS::EC2::SecurityGroupEgress'
   #  Properties:
@@ -94,10 +97,7 @@ Resources:
       DBSubnetGroupName: !Ref RDSSubnetGroup
       MasterUsername: !Ref DBUser
       MasterUserPassword: !Ref DBPassword
-      VPCSecurityGroups:
-        - !GetAtt 
-          - DBSecurityGroup
-          - GroupId
+      VPCSecurityGroups: !Ref DBSecurityGroup
 
 Outputs: 
   RDSHost:
