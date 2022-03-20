@@ -66,14 +66,23 @@ Resources:
   ALB:
     Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
     Properties:
-          Name: "arunkumaralb"
-          Scheme: "internet-facing"
-          Type: "application"
-          Subnets: 
-            - !Ref PublicSubnet1
-            - !Ref PublicSubnet2
-          SecurityGroups: 
-            - !Ref ALBSecurityGroup
+      Name: "arunkumaralb"
+      Scheme: "internet-facing"
+      Type: "application"
+      Subnets: 
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      SecurityGroups: 
+        - !Ref 
+      Tags:
+        - Key: Name
+          Value: !Sub ${AppName}-${EnvironmentName}-ALB
+        - Key: CreatedBy
+          Value: amohandas@presidio.com
+        - Key: Purpose
+          Value: VPC for MRBS Application
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
 
   ALBListener:
     Type: 'AWS::ElasticLoadBalancingV2::Listener'

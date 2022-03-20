@@ -4,7 +4,12 @@ Parameters:
   EnvironmentName:
     Description: An environment name that is prefixed to resource names
     Type: String
-    Default: MRBS APP
+    Default: dev
+
+  AppName:
+    Description: An environment name that is prefixed to resource names
+    Type: String
+    Default: MRBS
 
   VpcCIDR:
     Description: Please enter the IP range (CIDR notation) for this VPC
@@ -77,6 +82,7 @@ Resources:
       TemplateURL: https://mrbs-substacks.s3.amazonaws.com/networkstack.yaml
       Parameters:
         EnvironmentName : !Ref  EnvironmentName
+        AppName: !Ref AppName
         VpcCIDR : !Ref VpcCIDR
 
   RDSSubStack:
@@ -85,6 +91,7 @@ Resources:
       TemplateURL: https://mrbs-substacks.s3.amazonaws.com/rdsstack.yaml
       Parameters:
         EnvironmentName : !Ref  EnvironmentName
+        AppName: !Ref AppName
         VpcCIDR : !Ref VpcCIDR 
         DBUser: !Ref DBUser
         DBName: !Ref DBName
@@ -100,6 +107,7 @@ Resources:
       TemplateURL: https://mrbs-substacks.s3.amazonaws.com/albstack.yaml
       Parameters:
         EnvironmentName : !Ref  EnvironmentName
+        AppName: !Ref AppName
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", HVM64]
         KeyName : !Ref KeyName
         InstanceType : !Ref InstanceType

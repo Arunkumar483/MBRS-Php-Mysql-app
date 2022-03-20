@@ -4,8 +4,13 @@ Parameters:
   EnvironmentName:
     Description: An environment name that is prefixed to resource names
     Type: String
-    Default: Dev 
+    Default: dev 
     #ENV ->PROD OR DEV
+  
+  AppName:
+    Description: An environment name that is prefixed to resource names
+    Type: String
+    Default: MRBS
 
   VpcCIDR:
     Description: Please enter the IP range (CIDR notation) for this VPC
@@ -22,7 +27,14 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
+          Value:  !Sub ${AppName}-${EnvironmentName}-VPC
+        - Key: CreatedBy
+          Value: amohandas@presidio.com
+        - Key: Purpose
+          Value: VPC for MRBS Application
+        - Key: EnvironmentName
           Value: !Ref EnvironmentName
+        
   
   PublicSubnet1:
     Type: AWS::EC2::Subnet
@@ -33,8 +45,13 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Subnet (AZ1)
-        #created by
+          Value: !Sub ${AppName}-${EnvironmentName}-Public Subnet (AZ1)
+        - Key: CreatedBy
+          Value: amohandas@presidio.com
+        - Key: Purpose
+          Value: VPC for MRBS Application
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
   
   PublicSubnet2:
     Type: AWS::EC2::Subnet
@@ -45,7 +62,13 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
+          Value: !Sub ${AppName}-${EnvironmentName}-Public Subnet (AZ2)
+        - Key: CreatedBy
+          Value: amohandas@presidio.com
+        - Key: Purpose
+          Value: VPC for MRBS Application
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
   
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
@@ -56,7 +79,13 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet (AZ1)
+          Value: !Sub ${AppName}-${EnvironmentName}-Private Subnet (AZ1)
+        - Key: CreatedBy
+          Value: amohandas@presidio.com
+        - Key: Purpose
+          Value: VPC for MRBS Application
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
 
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
@@ -67,7 +96,14 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet (AZ2)
+          Value: !Sub ${AppName}-${EnvironmentName}-Private Subnet (AZ2)
+        - Key: CreatedBy
+          Value: amohandas@presidio.com
+        - Key: Purpose
+          Value: VPC for MRBS Application
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+        
 
   PrivateSubnet3:
     Type: AWS::EC2::Subnet
@@ -78,7 +114,13 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet (AZ3)
+          Value: !Sub ${AppName}-${EnvironmentName}-Private Subnet (AZ3)
+        - Key: CreatedBy
+          Value: amohandas@presidio.com
+        - Key: Purpose
+          Value: VPC for MRBS Application
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
   
   PrivateSubnet4:
     Type: AWS::EC2::Subnet
@@ -89,15 +131,26 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet (AZ4)
+          Value: !Sub ${AppName}-${EnvironmentName}-Private Subnet (AZ4)
+        - Key: CreatedBy
+          Value: amohandas@presidio.com
+        - Key: Purpose
+          Value: VPC for MRBS Application
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
   
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
+          Value: !Sub ${AppName}-${EnvironmentName}-IG
+        - Key: CreatedBy
+          Value: amohandas@presidio.com
+        - Key: Purpose
+          Value: VPC for MRBS Application
+        - Key: EnvironmentName
           Value: !Ref EnvironmentName
-        #include -ig
 
   InternetGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -121,7 +174,13 @@ Resources:
           Ref: PublicSubnet1
         Tags:
         - Key: Name
-          Value: MRBS-STACK  
+          Value: !Sub ${AppName}-${EnvironmentName}-NAT
+        - Key: CreatedBy
+          Value: amohandas@presidio.com
+        - Key: Purpose
+          Value: VPC for MRBS Application
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName 
   
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
@@ -129,7 +188,13 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Routes
+          Value: !Sub ${AppName}-${EnvironmentName}-PublicRouteTable
+        - Key: CreatedBy
+          Value: amohandas@presidio.com
+        - Key: Purpose
+          Value: VPC for MRBS Application
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
 
   PrivateRouteTable:
     Type: AWS::EC2::RouteTable
@@ -137,7 +202,13 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Routes
+          Value: !Sub ${AppName}-${EnvironmentName}-PrivateRouteTable
+        - Key: CreatedBy
+          Value: amohandas@presidio.com
+        - Key: Purpose
+          Value: VPC for MRBS Application
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
 
   DefaultPublicRoute:
     Type: AWS::EC2::Route

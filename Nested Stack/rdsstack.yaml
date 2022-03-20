@@ -82,7 +82,13 @@ Resources:
         - !Ref PrivateSubnet4
       Tags:
         - Key: Name
-          Value: Arun CF SubnetGroup
+          Value: !Sub ${AppName}-${EnvironmentName}-RDS Subnet Group
+        - Key: CreatedBy
+          Value: amohandas@presidio.com
+        - Key: Purpose
+          Value: VPC for MRBS Application
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
 
   RDSdbinstance:
     Type: AWS::RDS::DBInstance
@@ -99,6 +105,15 @@ Resources:
       MasterUsername: !Ref DBUser
       MasterUserPassword: !Ref DBPassword
       VPCSecurityGroups: [!Ref DBSecurityGroup]
+      Tags:
+        - Key: Name
+          Value: !Sub ${AppName}-${EnvironmentName}-RDS
+        - Key: CreatedBy
+          Value: amohandas@presidio.com
+        - Key: Purpose
+          Value: VPC for MRBS Application
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
 
 Outputs: 
   RDSHost:
