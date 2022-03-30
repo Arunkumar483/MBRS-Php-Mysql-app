@@ -1,5 +1,5 @@
 # Meeting Room Booking System Application Deployment (Cloud Formation) 
 ---
 ## Architecture
+![image](https://user-images.githubusercontent.com/52123143/160864501-1ca63231-827b-4272-b1ae-1c169387e1a6.png)
 
-<img src="https://user-images.githubusercontent.com/52123143/158527049-975c7a6c-ecd7-4305-a6f3-fa082b4eb6c4.png" width="50%">
